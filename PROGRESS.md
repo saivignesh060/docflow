@@ -15,48 +15,49 @@
 ---
 
 ## Phase 1 — Backend Foundation
-- [ ] Root `package.json` with npm workspaces
-- [ ] `docker-compose.yml` for PostgreSQL
-- [ ] `backend/` — Node + Express + TypeScript scaffolding
-- [ ] `backend/src/db/schema.ts` — Users, Documents, AuditLog tables
-- [ ] `backend/drizzle.config.ts`
-- [ ] `backend/src/db/seed.ts` — 4 seeded users
-- [ ] `backend/src/middleware/auth.ts` — Fake session via `x-user-id` header
-- [ ] `backend/src/index.ts` — Express app entry
+- [x] Root `package.json` with npm workspaces
+- [x] `docker-compose.yml` for PostgreSQL
+- [x] `backend/` — Node + Express + TypeScript scaffolding
+- [x] `backend/src/db/schema.ts` — Users, Documents, AuditLog tables
+- [x] `backend/drizzle.config.ts`
+- [x] `backend/src/db/seed.ts` — 4 seeded users
+- [x] `backend/src/middleware/auth.ts` — Fake session via `x-user-id` header
+- [x] `backend/src/index.ts` — Express app entry
 
 ## Phase 2 — Core State Machine
-- [ ] `backend/src/lib/transition.ts` — `transition(doc, action, user)` function
-  - [ ] Full transition table encoded
-  - [ ] Role + ownership validation
-  - [ ] Comment required for reject
-  - [ ] Returns `{ newStatus, auditAction }` or throws
+- [x] `backend/src/lib/transition.ts` — `transition(doc, action, user)` function
+  - [x] Full transition table encoded
+  - [x] Role + ownership validation
+  - [x] Comment required for reject
+  - [x] Returns `{ newStatus, auditAction }` or throws
 
 ## Phase 3 — API Endpoints
-- [ ] `GET /api/documents` — role-scoped list
-- [ ] `GET /api/documents/:id` — visibility check
-- [ ] `GET /api/documents/:id/history` — audit log
-- [ ] `POST /api/documents` — create draft
-- [ ] `PATCH /api/documents/:id` — edit (draft/rejected only)
-- [ ] `POST /api/documents/:id/submit`
-- [ ] `POST /api/documents/:id/approve`
-- [ ] `POST /api/documents/:id/reject`
-- [ ] `POST /api/documents/:id/reopen`
-- [ ] `POST /api/documents/:id/publish`
-- [ ] `POST /api/documents/:id/archive`
-- [ ] `expectedVersion` → 409 conflict on all mutating endpoints
+- [x] `GET /api/documents` — role-scoped list
+- [x] `GET /api/documents/:id` — visibility check
+- [x] `GET /api/documents/:id/history` — audit log
+- [x] `POST /api/documents` — create draft
+- [x] `PATCH /api/documents/:id` — edit (draft/rejected only)
+- [x] `POST /api/documents/:id/submit`
+- [x] `POST /api/documents/:id/approve`
+- [x] `POST /api/documents/:id/reject`
+- [x] `POST /api/documents/:id/reopen`
+- [x] `POST /api/documents/:id/publish`
+- [x] `POST /api/documents/:id/archive`
+- [x] `expectedVersion` → 409 conflict on all mutating endpoints
 
 ## Phase 4 — Frontend
-- [ ] Vite + React + TypeScript in `frontend/`
-- [ ] API client (`frontend/src/api/`)
-- [ ] `UserSwitcher` component (top bar — login-as)
-- [ ] `DocumentList` page (role-scoped)
-- [ ] `DocumentDetail` page (title, body, status badge, action buttons)
-- [ ] Action buttons (only valid transitions per role/state shown)
-- [ ] `DocumentHistory` panel (audit log)
-- [ ] Create document form
-- [ ] Edit document form (draft/rejected only)
+- [x] Vite + React + TypeScript in `frontend/`
+- [x] API client (`frontend/src/api/`)
+- [x] `UserSwitcher` component (sidebar — login-as)
+- [x] `DocumentList` page (role-scoped)
+- [x] `DocumentDetail` page (title, body, status badge, action buttons)
+- [x] Action buttons (only valid transitions per role/state shown)
+- [x] `DocumentHistory` panel (audit log, tabbed view)
+- [x] Create document form
+- [x] Edit document form (draft/rejected only)
 
 ## Phase 5 — Polish & Verification
+- [ ] Start docker-compose + run migrations + seed + verify all endpoints work
 - [ ] All 9 invariants from PRD §6 verified manually
 - [ ] `DESIGN.md` written (answers PRD §10 questions)
 - [ ] Final commit + push to GitHub
@@ -66,15 +67,15 @@
 ## Non-Negotiable Invariants Status
 | Invariant | Status |
 |---|---|
-| Every action checked server-side | ⏳ Pending |
-| All transitions via `transition()` | ⏳ Pending |
-| Viewers can't fetch non-published docs | ⏳ Pending |
-| Author can't approve/reject/publish own doc | ⏳ Pending |
-| Reject requires non-empty comment | ⏳ Pending |
-| Publish only from `approved` | ⏳ Pending |
-| Archived docs reject all changes | ⏳ Pending |
-| Status + AuditLog in one DB transaction | ⏳ Pending |
-| `expectedVersion` mismatch → 409 | ⏳ Pending |
+| Every action checked server-side | ✅ Done (middleware + route guards) |
+| All transitions via `transition()` | ✅ Done (single function, all endpoints call it) |
+| Viewers can't fetch non-published docs | ✅ Done (`canViewDocument()` on all GET routes) |
+| Author can't approve/reject/publish own doc | ✅ Done (transition table checks `authorId === actor.id`) |
+| Reject requires non-empty comment | ✅ Done (transition table validates) |
+| Publish only from `approved` | ✅ Done (only `approved:publish` key in table) |
+| Archived docs reject all changes | ✅ Done (early return in `transition()`) |
+| Status + AuditLog in one DB transaction | ✅ Done (pg client transactions in all mutating handlers) |
+| `expectedVersion` mismatch → 409 | ✅ Done (WHERE version = $version, 0 rows = 409) |
 
 ---
 

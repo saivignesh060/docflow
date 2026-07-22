@@ -69,8 +69,8 @@ export const api = {
     fetch(`${API_BASE}/users`).then((r) => r.json()),
 
   // Documents
-  getDocuments: (userId: string): Promise<Document[]> =>
-    request('/documents', userId),
+  getDocuments: (userId: string, includeArchived = false): Promise<Document[]> =>
+    request(`/documents${includeArchived ? '?includeArchived=true' : ''}`, userId),
 
   getDocument: (id: string, userId: string): Promise<Document> =>
     request(`/documents/${id}`, userId),

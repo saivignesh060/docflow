@@ -27,6 +27,7 @@ export default function App() {
   const [view, setView] = useState<View>('list');
   const [docsLoading, setDocsLoading] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [showArchived, setShowArchived] = useState(false);
 
   // ── Load users on mount ──────────────────────────────────────────────────
   useEffect(() => {
@@ -41,20 +42,26 @@ export default function App() {
     if (!currentUser) return;
     setDocsLoading(true);
     try {
-      const docs = await api.getDocuments(currentUser.id);
+      const docs = await api.getDocuments(currentUser.id, currentUser.role === 'admin' && showArchived);
       setDocuments(docs);
     } catch {
       showToast('error', 'Failed to load documents');
     } finally {
       setDocsLoading(false);
     }
-  }, [currentUser]);
+  }, [currentUser, showArchived]);
 
   useEffect(() => {
     loadDocuments();
     setSelectedDoc(null);
     setView('list');
-  }, [currentUser]);
+  }, [currentUser, showArchived]);
+
+  useEffect(() => {
+    if (currentUser?.role !== 'admin' && showArchived) {
+      setShowArchived(false);
+    }
+  }, [currentUser, showArchived]);
 
   // ── Load history when doc selected ──────────────────────────────────────
   useEffect(() => {
@@ -148,6 +155,16 @@ export default function App() {
           />
           <div className="divider" />
           <div className="section-label">Documents</div>
+          {currentUser?.role === 'admin' && (
+            <label className="sidebar-checkbox">
+              <input
+                type="checkbox"
+                checked={showArchived}
+                onChange={(e) => setShowArchived(e.target.checked)}
+              />
+              Show archived
+            </label>
+          )}
           {docsLoading ? (
             <div className="loading-center" style={{ padding: 24 }}>
               <div className="spinner" />

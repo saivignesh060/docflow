@@ -99,6 +99,37 @@
 6. `npm run dev` from root to start both servers
 
 ## Key Files
+
+---
+
+## 2026-07-22 Archived Visibility Hardening
+- Tightened `backend/src/routes/documents.ts` so `includeArchived=true` is honored only for admins.
+- Updated `canViewDocument()` so archived documents return `404` for all non-admin roles on direct `GET /api/documents/:id` and `GET /api/documents/:id/history`.
+- Kept viewer list access locked to `published` documents only, regardless of query params.
+- Kept author list access to own non-archived documents plus published documents from others; archived documents no longer appear even for the owner.
+- Kept reviewer list access to own non-archived documents plus submitted, approved, published, and rejected documents; archived documents no longer appear even when `includeArchived=true` is sent manually.
+- Updated `frontend/src/App.tsx` so the "Show archived" checkbox renders only for admins and the frontend sends `includeArchived=true` only for admins with the checkbox enabled.
+- Verified `npm test --workspace=backend` passes: 7 tests passed.
+- Verified `npm run build --workspace=backend` passes.
+- Verified `npm run build --workspace=frontend` passes.
+- Manually verified an Alice-owned archived document: viewer, author, and reviewer could not list it with `includeArchived=true`, and direct detail/history requests returned `404`; admin default list excluded it, while admin `includeArchived=true` included it.
+
+---
+
+## 2026-07-22 Reviewer Visibility, Archives, Tests, and Design Notes
+- Fixed reviewer document visibility in `backend/src/routes/documents.ts`: reviewers can see all non-draft documents plus their own drafts, but not drafts owned by other authors.
+- Split `GET /api/documents` list behavior so admins still see everything, while reviewers filter out other authors' drafts.
+- Added `includeArchived=true` support to `GET /api/documents`; archived documents are excluded by default for non-admin roles, while admins continue seeing archived documents.
+- Added a single frontend "Show archived" checkbox in the sidebar and threaded it through `frontend/src/api/client.ts` and `frontend/src/App.tsx`.
+- Removed dead code from `backend/src/routes/documents.ts`: the unused `visibleStatuses()` helper and the unreachable archived edit check in `PATCH /:id`.
+- Added pure unit coverage for `backend/src/lib/transition.ts` in `backend/src/lib/transition.test.ts`, using Vitest.
+- Added `DESIGN.md` at the repo root answering the 8 questions from `PRD.md` section 10 with references to real code files/functions.
+- Updated backend test/build configuration with a `test` script, Vitest dev dependency, and `tsconfig.json` exclusion for `src/**/*.test.ts`.
+- Verified `npm test --workspace=backend` passes: 7 tests passed.
+- Verified `npm run build --workspace=backend` passes.
+- Verified `npm run build --workspace=frontend` passes.
+- Manually re-tested reviewer access against an Alice-owned draft as Bob/reviewer; `GET /api/documents/:id` returned `404`.
+
 - `backend/src/lib/transition.ts` — The core state machine (most important file)
 - `backend/src/routes/documents.ts` — All API routes
 - `backend/src/db/schema.ts` — DB schema

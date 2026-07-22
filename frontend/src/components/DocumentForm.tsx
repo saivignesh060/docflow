@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Document, api } from '../api/client';
+import { api } from '../api/client';
+import type { Document } from '../api/client';
 
 interface Props {
   userId: string;

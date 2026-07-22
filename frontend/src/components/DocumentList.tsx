@@ -1,4 +1,4 @@
-import { Document, DocumentStatus } from '../api/client';
+import type { Document, DocumentStatus } from '../api/client';
 
 interface Props {
   documents: Document[];

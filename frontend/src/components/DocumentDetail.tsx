@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Document, User, AuditLog, DocumentStatus, api } from '../api/client';
+import { api } from '../api/client';
+import type { Document, User, AuditLog, DocumentStatus } from '../api/client';
 import { DocumentHistory } from './DocumentHistory';
 
 interface Props {
@@ -103,8 +104,7 @@ export function DocumentDetail({
   const availableActions = getAvailableActions(doc, currentUser);
   const canEdit =
     (doc.status === 'draft' || doc.status === 'rejected') &&
-    doc.authorId === currentUser.id &&
-    doc.status !== 'archived';
+    doc.authorId === currentUser.id;
 
   async function handleAction(action: string) {
     if (action === 'reject') {

@@ -1,6 +1,17 @@
 # DocFlow — Build Progress Tracker
 
 > **Purpose:** This file tracks every task so any AI (or human) can pick up exactly where the last session left off.
+
+---
+
+## 2026-07-22 Frontend Blank Screen Fix
+- Read all project-authored markdown before making code changes: `README.md`, `PRD.md`, `PROGRESS.md`, and `frontend/README.md`.
+- Confirmed runtime issue on `localhost:5173`: frontend was importing TypeScript-only interfaces (`User`, `Document`, `AuditLog`, `DocumentStatus`) as browser runtime exports from `frontend/src/api/client.ts`.
+- Updated frontend imports to use `import type` for type-only symbols in `App.tsx`, `UserSwitcher.tsx`, `DocumentDetail.tsx`, `DocumentForm.tsx`, `DocumentHistory.tsx`, and `DocumentList.tsx`.
+- Removed a redundant `doc.status !== 'archived'` check in `DocumentDetail` after TypeScript had already narrowed editable statuses to `draft | rejected`.
+- Verified `npm run build --workspace=frontend` passes.
+- Verified backend API is reachable with `GET http://localhost:3001/api/users` returning `200`.
+- Verified Vite's live transform for `App.tsx` now imports only runtime `api` from `/src/api/client.ts`.
 > **Last updated:** Phase 1 — Backend Foundation started
 
 ---

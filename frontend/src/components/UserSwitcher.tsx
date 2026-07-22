@@ -1,4 +1,4 @@
-import { User } from '../api/client';
+import type { User } from '../api/client';
 
 interface Props {
   users: User[];

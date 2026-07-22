@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { api, User, Document, AuditLog } from './api/client';
+import { api } from './api/client';
+import type { User, Document, AuditLog } from './api/client';
 import { UserSwitcher } from './components/UserSwitcher';
 import { DocumentList } from './components/DocumentList';
 import { DocumentDetail } from './components/DocumentDetail';

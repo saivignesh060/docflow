@@ -1,4 +1,4 @@
-import { AuditLog } from '../api/client';
+import type { AuditLog } from '../api/client';
 
 interface Props {
   logs: AuditLog[];

@@ -28,7 +28,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export function DocumentList({ documents, selectedId, onSelect, onNew, currentUserRole }: Props) {
-  const canCreate = currentUserRole === 'author' || currentUserRole === 'admin';
+  const canCreate = currentUserRole === 'author';
 
   return (
     <div className="card" style={{ padding: '16px' }}>

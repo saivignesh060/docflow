@@ -102,6 +102,20 @@
 
 ---
 
+## 2026-07-22 Author-Owned Archives and Author-Only Creation
+- Restricted document creation to authors only in `backend/src/routes/documents.ts`; admin create attempts now return `403`.
+- Updated `backend/src/lib/transition.ts` so `draft:submit` and `rejected:reopen` require `actor.role === 'author'`, while preserving the owner check.
+- Updated frontend creation/action UI: `frontend/src/components/DocumentList.tsx` shows `+ New` only for authors, and `frontend/src/components/DocumentDetail.tsx` shows owner submit/reopen only for authors while keeping admin archive actions.
+- Corrected archived ownership visibility: `canViewDocument()` now allows document owners to see their own documents at any status, including `archived`.
+- Updated the author list rule so authors see their own archived documents plus published documents from others.
+- Updated `README.md` and `DESIGN.md` to match owner-visible archived documents and author-only creation.
+- Verified `npm test --workspace=backend` passes: 7 tests passed.
+- Verified `npm run build --workspace=backend` passes.
+- Verified `npm run build --workspace=frontend` passes.
+- Manually verified: admin document creation returned `403`; Alice could see her archived document in list/detail/history; Bob/reviewer and viewer could not list, fetch, or fetch history for that same archived document.
+
+---
+
 ## 2026-07-22 Archived Visibility Hardening
 - Tightened `backend/src/routes/documents.ts` so `includeArchived=true` is honored only for admins.
 - Updated `canViewDocument()` so archived documents return `404` for all non-admin roles on direct `GET /api/documents/:id` and `GET /api/documents/:id/history`.

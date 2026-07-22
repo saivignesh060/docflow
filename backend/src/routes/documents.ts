@@ -13,15 +13,11 @@ router.use(requireAuth);
 
 
 function canViewDocument(doc: typeof documents.$inferSelect, userId: string, userRole: string): boolean {
+  if (doc.authorId === userId) return true;
   if (userRole === 'admin') return true;
-  if (doc.status === 'archived') return false;
   if (userRole === 'reviewer') {
-    return doc.authorId === userId || ['submitted', 'approved', 'published', 'rejected'].includes(doc.status);
+    return doc.status !== 'draft' && doc.status !== 'archived';
   }
-  if (userRole === 'author') {
-    return doc.status === 'published' || doc.authorId === userId;
-  }
-  // viewer
   return doc.status === 'published';
 }
 
@@ -47,7 +43,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       // Own docs (all statuses) + published docs from others
       const allDocs = await db.select().from(documents).orderBy(desc(documents.updatedAt));
       docs = allDocs.filter(
-        (d) => d.status !== 'archived' && (d.authorId === user.id || d.status === 'published')
+        (d) => d.authorId === user.id || d.status === 'published'
       );
     } else {
       // viewer
@@ -143,7 +139,7 @@ router.get('/:id/history', async (req: Request, res: Response): Promise<void> =>
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   const user = req.user!;
 
-  if (user.role !== 'author' && user.role !== 'admin') {
+  if (user.role !== 'author') {
     res.status(403).json({ error: 'Only authors can create documents' });
     return;
   }

@@ -40,7 +40,7 @@ type TransitionValidator = (
 const TRANSITION_TABLE: Record<string, TransitionValidator> = {
   // draft → submitted (owner author only)
   'draft:submit': (doc, actor) => {
-    if (actor.role !== 'author' && actor.role !== 'admin') {
+    if (actor.role !== 'author') {
       throw new TransitionError('Only authors can submit documents', 403);
     }
     if (doc.authorId !== actor.id) {
@@ -76,7 +76,7 @@ const TRANSITION_TABLE: Record<string, TransitionValidator> = {
 
   // rejected → draft (owner author only)
   'rejected:reopen': (doc, actor) => {
-    if (actor.role !== 'author' && actor.role !== 'admin') {
+    if (actor.role !== 'author') {
       throw new TransitionError('Only authors can reopen documents', 403);
     }
     if (doc.authorId !== actor.id) {

@@ -43,7 +43,7 @@ function getAvailableActions(doc: Document, user: User): string[] {
 
   switch (doc.status) {
     case 'draft':
-      if (isOwner && (user.role === 'author' || user.role === 'admin')) {
+      if (isOwner && user.role === 'author') {
         actions.push('submit');
       }
       if (user.role === 'admin') actions.push('archive');
@@ -64,7 +64,7 @@ function getAvailableActions(doc: Document, user: User): string[] {
       break;
 
     case 'rejected':
-      if (isOwner && (user.role === 'author' || user.role === 'admin')) {
+      if (isOwner && user.role === 'author') {
         actions.push('reopen');
       }
       break;

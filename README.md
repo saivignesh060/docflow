@@ -21,7 +21,7 @@ All transitions are validated in `backend/src/lib/transition.ts`. API routes mus
 
 ## Roles
 - `viewer`: can see published documents only.
-- `author`: can create documents, edit own draft/rejected documents, submit own drafts, and see own non-archived documents plus published documents from others.
+- `author`: can create documents, edit own draft/rejected documents, submit own drafts, and see own documents at any status plus published documents from others.
 - `reviewer`: can review submitted documents, cannot approve/reject their own documents, and cannot see other authors' drafts or archived documents.
 - `admin`: can archive documents and is the only role that can view archived documents.
 
